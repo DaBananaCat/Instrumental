@@ -1,11 +1,14 @@
 package banana.instrumental;
 
+import banana.instrumental.items.Guitar;
+import banana.instrumental.items.InstrumentTemplate;
 import banana.instrumental.items.PanFlute;
 import net.fabricmc.api.ModInitializer;
 
 import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +22,7 @@ public class Instrumental implements ModInitializer {
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
 	public static final Item PAN_FLUTE = new PanFlute();
+	public static final Item GUITAR = new Guitar();
 
 	@Override
 	public void onInitialize() {
@@ -27,7 +31,7 @@ public class Instrumental implements ModInitializer {
 		// Proceed with mild caution.
 
 		LOGGER.info("Hello Fabric world!");
-
 		Registry.register(Registries.ITEM, Identifier.of(Instrumental.MOD_ID, "pan_flute"), PAN_FLUTE);
+		Registry.register(Registries.ITEM, Identifier.of(Instrumental.MOD_ID, "guitar"), GUITAR);
 	}
 }
