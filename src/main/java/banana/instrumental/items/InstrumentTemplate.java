@@ -17,8 +17,10 @@ import net.minecraft.util.Rarity;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.UseAction;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.ref.Reference;
+import java.util.Objects;
 
 public class InstrumentTemplate extends Item {
 
@@ -27,14 +29,17 @@ public class InstrumentTemplate extends Item {
     String[] hex = {"#77D700","#95C000","#B2A500","#CC8600","#E26500","#F34100","#FC1E00","#FE000F","#F70033","#E8005A","#CF0083","#AE00A9",
             "#8600CC","#8600CC","#5B00E7","#2D00F9","#020AFE","#0037F6","#0068E0","#009ABC","#00C68D","#00E958","#00FC21","#1FFC00","#59E800","#94C100"};
     public final RegistryEntry.Reference<SoundEvent> instrument;
+    public final String hand_action;
 
-    public InstrumentTemplate(RegistryEntry.Reference<SoundEvent> instrument) {
+    public InstrumentTemplate(RegistryEntry.Reference<SoundEvent> instrument, String hand_action) {
         super(new Item.Settings().maxCount(1).rarity(Rarity.UNCOMMON));
         this.instrument = instrument;
+        this.hand_action = hand_action;
         for (int i = -12; i <= 12; i++) {
             keys[i + 12] = (float) Math.pow(2, (double) (i) / 12);
         }
     }
+
 
     @Override
     public ItemStack getDefaultStack() {
@@ -48,7 +53,15 @@ public class InstrumentTemplate extends Item {
 
     @Override
     public UseAction getUseAction(ItemStack stack) {
-        return UseAction.TOOT_HORN;
+        if (Objects.equals(this.hand_action, "horn")) {
+            return UseAction.TOOT_HORN;
+        } else if (Objects.equals(this.hand_action, "spear")) {
+            return UseAction.SPEAR;
+        } else if (Objects.equals(this.hand_action, "bow")) {
+            return UseAction.BOW;
+        }
+
+        return UseAction.NONE;
     }
 
     @Override
