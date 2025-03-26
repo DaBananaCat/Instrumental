@@ -5,21 +5,16 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
-import net.minecraft.util.Rarity;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.UseAction;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.Nullable;
 
-import java.lang.ref.Reference;
 import java.util.Objects;
 
 public class InstrumentTemplate extends Item {
@@ -32,7 +27,7 @@ public class InstrumentTemplate extends Item {
     public final String hand_action;
 
     public InstrumentTemplate(RegistryEntry.Reference<SoundEvent> instrument, String hand_action) {
-        super(new Item.Settings().maxCount(1).rarity(Rarity.UNCOMMON));
+        super(new Item.Settings().maxCount(1));
         this.instrument = instrument;
         this.hand_action = hand_action;
         for (int i = -12; i <= 12; i++) {
@@ -73,7 +68,6 @@ public class InstrumentTemplate extends Item {
             float pitch_mod = (float) Math.pow(2, (double) (Math.round(12 * (-pitch + 90) / 90) - 12) /12);
 
             world.playSound(null, user.getX(), user.getY(), user.getZ(), this.instrument, SoundCategory.PLAYERS, 1.0F, pitch_mod);
-            world.addParticle(ParticleTypes.NOTE, user.getX(), user.getY() + 1.0, user.getZ(), pitch_mod, 0.0, 0.0);
             return TypedActionResult.consume(itemStack);
         }
         return TypedActionResult.fail(itemStack);

@@ -1,29 +1,24 @@
 package banana.instrumental.block;
 
-import banana.instrumental.Instrumental;
 import banana.instrumental.sound.InstrumentalSounds;
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.*;
 import net.minecraft.block.piston.PistonBehavior;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 
-import static net.minecraft.block.LecternBlock.BASE_SHAPE;
 
 public class Drum extends Block {
     private static final VoxelShape SHAPE = Block.createCuboidShape(3,0,3,13,13,13);
 
     public Drum() {
-        super(AbstractBlock.Settings.create().nonOpaque().burnable());
+        super(AbstractBlock.Settings.create().nonOpaque().burnable().sounds(BlockSoundGroup.WOOD));
     }
 
     @Override

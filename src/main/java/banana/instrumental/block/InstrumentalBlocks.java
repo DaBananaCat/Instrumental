@@ -1,11 +1,12 @@
 package banana.instrumental.block;
 
 import banana.instrumental.Instrumental;
-import net.minecraft.block.AbstractBlock;
+import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemGroups;
+import net.minecraft.item.Items;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
@@ -15,7 +16,9 @@ public class InstrumentalBlocks {
 
     public static void registerModBlocks() {
         register(DRUM,"drum",true);
-
+        ItemGroupEvents.modifyEntriesEvent(ItemGroups.FUNCTIONAL).register(content -> {
+            content.addAfter(Items.JUKEBOX,DRUM);
+        });
 
     }
 
@@ -27,6 +30,7 @@ public class InstrumentalBlocks {
         // Eg: if it's a technical block like `minecraft:air` or `minecraft:end_gateway`
         if (shouldRegisterItem) {
             BlockItem blockItem = new BlockItem(block, new Item.Settings());
+
             Registry.register(Registries.ITEM, id, blockItem);
         }
 
