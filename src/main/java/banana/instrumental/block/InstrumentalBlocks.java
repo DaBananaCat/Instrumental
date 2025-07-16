@@ -9,6 +9,8 @@ import net.minecraft.item.ItemGroups;
 import net.minecraft.item.Items;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.util.Identifier;
 
 public class InstrumentalBlocks {
@@ -26,15 +28,17 @@ public class InstrumentalBlocks {
         // Register the block and its item.
         Identifier id = Identifier.of(Instrumental.MOD_ID, name);
 
+        RegistryKey<Block> blockKey = RegistryKey.of(RegistryKeys.BLOCK, id);
+
         // Sometimes, you may not want to register an item for the block.
         // Eg: if it's a technical block like `minecraft:air` or `minecraft:end_gateway`
         if (shouldRegisterItem) {
-            BlockItem blockItem = new BlockItem(block, new Item.Settings());
+            RegistryKey<Item> itemKey = RegistryKey.of(RegistryKeys.ITEM, id);
 
-            Registry.register(Registries.ITEM, id, blockItem);
+            Registry.register(Registries.ITEM, itemKey, new BlockItem(block, new Item.Settings().registryKey(itemKey)));
         }
 
-        return Registry.register(Registries.BLOCK, id, block);
+        return Registry.register(Registries.BLOCK, blockKey, block);
     }
 
 }

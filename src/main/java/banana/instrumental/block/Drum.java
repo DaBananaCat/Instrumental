@@ -1,12 +1,16 @@
 package banana.instrumental.block;
 
+import banana.instrumental.Instrumental;
 import banana.instrumental.sound.InstrumentalSounds;
 import net.minecraft.block.*;
 import net.minecraft.block.piston.PistonBehavior;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.ActionResult;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.shape.VoxelShape;
@@ -14,11 +18,11 @@ import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 
 
-public class Drum extends Block {
+public class Drum extends TransparentBlock {
     private static final VoxelShape SHAPE = Block.createCuboidShape(3,0,3,13,13,13);
 
     public Drum() {
-        super(AbstractBlock.Settings.create().nonOpaque().burnable().sounds(BlockSoundGroup.WOOD));
+        super(AbstractBlock.Settings.create().nonOpaque().burnable().sounds(BlockSoundGroup.WOOD).registryKey(RegistryKey.of(RegistryKeys.BLOCK, Identifier.of(Instrumental.MOD_ID, "harp"))));
     }
 
     @Override
@@ -29,11 +33,6 @@ public class Drum extends Block {
 
     protected VoxelShape getCameraCollisionShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
         return this.getOutlineShape(state, world, pos, context);
-    }
-
-    @Override
-    protected boolean isTransparent(BlockState state, BlockView world, BlockPos pos) {
-        return true;
     }
 
     @Override

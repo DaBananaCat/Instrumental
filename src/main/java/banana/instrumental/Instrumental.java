@@ -13,45 +13,48 @@ import net.minecraft.item.ItemGroups;
 import net.minecraft.item.Items;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class Instrumental implements ModInitializer {
+	
 	public static final String MOD_ID = "instrumental";
-
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
-
-	public static final Item PAN_FLUTE = new PanFlute();
-	public static final Item GUITAR = new Guitar();
-	public static final Item HARP = new Harp();
-
+	
+	public static Item PAN_FLUTE;
+	public static Item GUITAR;
+	public static Item HARP;
+	public static Item TEST_ITEM;
+	
 	public static final Identifier DRUM = Identifier.of("drum");
 	public static SoundEvent DRUM_SOUND_EVENT = SoundEvent.of(DRUM);
-
-
+	
 	@Override
 	public void onInitialize() {
-
+		
 		InstrumentalSounds.registerSounds();
-
 		InstrumentalBlocks.registerModBlocks();
-
-		Registry.register(Registries.ITEM, Identifier.of(Instrumental.MOD_ID, "pan_flute"), PAN_FLUTE);
+		
+		PAN_FLUTE = register("pan_flute", new PanFlute());
+		HARP = register("harp", new Harp());
+		GUITAR = register("guitar", new Guitar());
+		TEST_ITEM = register("test_item", new Item(new Item.Settings().registryKey(RegistryKey.of(RegistryKeys.ITEM, Identifier.of(Instrumental.MOD_ID, "test_item")))));
 		ItemGroupEvents.modifyEntriesEvent(ItemGroups.TOOLS).register(content -> {
-			content.addAfter(Items.GOAT_HORN,PAN_FLUTE);
+			content.add(TEST_ITEM);
 		});
-
-		Registry.register(Registries.ITEM, Identifier.of(Instrumental.MOD_ID, "harp"), HARP);
 		ItemGroupEvents.modifyEntriesEvent(ItemGroups.TOOLS).register(content -> {
-			content.addAfter(PAN_FLUTE,HARP);
+			content.addAfter(Items.GOAT_HORN, PAN_FLUTE);
+			content.addAfter(PAN_FLUTE, HARP);
+			content.addAfter(HARP, GUITAR);
 		});
-
-		Registry.register(Registries.ITEM, Identifier.of(Instrumental.MOD_ID, "guitar"), GUITAR);
-		ItemGroupEvents.modifyEntriesEvent(ItemGroups.TOOLS).register(content -> {
-			content.addAfter(HARP,GUITAR);
-		});
-
+		
+	}
+	
+	private static Item register(String name, Item item) {
+		return Registry.register(Registries.ITEM, Identifier.of(Instrumental.MOD_ID, name), item);
 	}
 }
