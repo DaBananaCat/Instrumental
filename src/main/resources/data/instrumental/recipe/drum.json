@@ -1,12 +1,8 @@
 {
   "type": "minecraft:crafting_shaped",
   "key": {
-    "#": {
-      "item": "minecraft:paper"
-    },
-    "X": {
-      "tag": "minecraft:planks"
-    }
+    "#": "minecraft:paper",
+    "X": "#minecraft:planks"
   },
   "pattern": [
     " # ",

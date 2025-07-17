@@ -1,13 +1,9 @@
 {
   "type": "minecraft:crafting_shaped",
-  "category": "misc",
+  "category": "equipment",
   "key": {
-    "#": {
-      "tag": "minecraft:planks"
-    },
-    "X": {
-      "item": "minecraft:string"
-    }
+    "#": "#minecraft:planks",
+    "X": "minecraft:string"
   },
   "pattern": [
     "###",
