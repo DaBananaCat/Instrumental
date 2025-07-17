@@ -13,8 +13,6 @@ import net.minecraft.item.ItemGroups;
 import net.minecraft.item.Items;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryKeys;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
@@ -28,7 +26,6 @@ public class Instrumental implements ModInitializer {
 	public static Item PAN_FLUTE;
 	public static Item GUITAR;
 	public static Item HARP;
-	public static Item TEST_ITEM;
 	
 	public static final Identifier DRUM = Identifier.of("drum");
 	public static SoundEvent DRUM_SOUND_EVENT = SoundEvent.of(DRUM);
@@ -42,10 +39,7 @@ public class Instrumental implements ModInitializer {
 		PAN_FLUTE = register("pan_flute", new PanFlute());
 		HARP = register("harp", new Harp());
 		GUITAR = register("guitar", new Guitar());
-		TEST_ITEM = register("test_item", new Item(new Item.Settings().registryKey(RegistryKey.of(RegistryKeys.ITEM, Identifier.of(Instrumental.MOD_ID, "test_item")))));
-		ItemGroupEvents.modifyEntriesEvent(ItemGroups.TOOLS).register(content -> {
-			content.add(TEST_ITEM);
-		});
+		
 		ItemGroupEvents.modifyEntriesEvent(ItemGroups.TOOLS).register(content -> {
 			content.addAfter(Items.GOAT_HORN, PAN_FLUTE);
 			content.addAfter(PAN_FLUTE, HARP);
