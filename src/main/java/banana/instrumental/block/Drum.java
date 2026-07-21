@@ -19,32 +19,31 @@ import net.minecraft.world.World;
 
 
 public class Drum extends TransparentBlock {
-    private static final VoxelShape SHAPE = Block.createCuboidShape(3,0,3,13,13,13);
-
-    public Drum() {
-        super(AbstractBlock.Settings.create().nonOpaque().burnable().sounds(BlockSoundGroup.WOOD).registryKey(RegistryKey.of(RegistryKeys.BLOCK, Identifier.of(Instrumental.MOD_ID, "harp"))));
-    }
-
-    @Override
-    protected VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
-        return SHAPE;
-    }
-
-
-    protected VoxelShape getCameraCollisionShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
-        return this.getOutlineShape(state, world, pos, context);
-    }
-
-    @Override
-    protected ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit) {
-        if (!world.isClient) {
-            if (player.isSneaking() || world.getBlockState(new BlockPos(pos.getX(),pos.getY()-1,pos.getZ())).getPistonBehavior() == PistonBehavior.PUSH_ONLY) {
-                world.playSound(null, pos, InstrumentalSounds.DRUM, SoundCategory.BLOCKS, 1.0f, 2.0f);
-            }
-            else {
-                world.playSound(null, pos, InstrumentalSounds.DRUM, SoundCategory.BLOCKS, 1.0f, 1.0f);
-            }
-        }
-        return ActionResult.SUCCESS;
-    }
+	private static final VoxelShape SHAPE = Block.createCuboidShape(3, 0, 3, 13, 13, 13);
+	
+	public Drum() {
+		super(AbstractBlock.Settings.create().nonOpaque().burnable().sounds(BlockSoundGroup.WOOD).registryKey(RegistryKey.of(RegistryKeys.BLOCK, Identifier.of(Instrumental.MOD_ID, "harp"))));
+	}
+	
+	@Override
+	protected VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
+		return SHAPE;
+	}
+	
+	
+	protected VoxelShape getCameraCollisionShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
+		return this.getOutlineShape(state, world, pos, context);
+	}
+	
+	@Override
+	protected ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit) {
+		if (!world.isClient()) {
+			if (player.isSneaking() || world.getBlockState(new BlockPos(pos.getX(), pos.getY() - 1, pos.getZ())).getPistonBehavior() == PistonBehavior.PUSH_ONLY) {
+				world.playSound(null, pos, InstrumentalSounds.DRUM, SoundCategory.BLOCKS, 1.0f, 2.0f);
+			} else {
+				world.playSound(null, pos, InstrumentalSounds.DRUM, SoundCategory.BLOCKS, 1.0f, 1.0f);
+			}
+		}
+		return ActionResult.SUCCESS;
+	}
 }

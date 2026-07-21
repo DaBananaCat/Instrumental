@@ -7,6 +7,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
@@ -84,7 +85,7 @@ public class InstrumentTemplate extends Item {
 	@Override
 	public ActionResult use(World world, PlayerEntity user, Hand hand) {
 		ItemStack itemStack = user.getStackInHand(hand);
-		if (!world.isClient) {
+		if (!world.isClient()) {
 			user.setCurrentHand(hand);
 			float pitch = user.getPitch();
 			float pitch_mod = (float) Math.pow(2, (double) (Math.round(12 * (-pitch + 90) / 90) - 12) / 12);
