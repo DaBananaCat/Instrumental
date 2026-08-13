@@ -1,14 +1,12 @@
 package banana.instrumental.items;
 
 import banana.instrumental.Instrumental;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.util.Identifier;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.resources.Identifier;
 
 public class PanFlute extends InstrumentTemplate {
 
     public PanFlute() {
-        super(SoundEvents.BLOCK_NOTE_BLOCK_FLUTE,"horn", Identifier.of(Instrumental.MOD_ID, "pan_flute"));
+        super(SoundEvents.NOTE_BLOCK_FLUTE,"horn", Identifier.fromNamespaceAndPath(Instrumental.MOD_ID, "pan_flute"));
     }
 }

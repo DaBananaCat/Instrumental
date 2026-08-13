@@ -2,48 +2,49 @@ package banana.instrumental.block;
 
 import banana.instrumental.Instrumental;
 import banana.instrumental.sound.InstrumentalSounds;
-import net.minecraft.block.*;
-import net.minecraft.block.piston.PistonBehavior;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.sound.BlockSoundGroup;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.world.BlockView;
-import net.minecraft.world.World;
-
+import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.PushReaction;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 
 public class Drum extends TransparentBlock {
-	private static final VoxelShape SHAPE = Block.createCuboidShape(3, 0, 3, 13, 13, 13);
-	
-	public Drum() {
-		super(AbstractBlock.Settings.create().nonOpaque().burnable().sounds(BlockSoundGroup.WOOD).registryKey(RegistryKey.of(RegistryKeys.BLOCK, Identifier.of(Instrumental.MOD_ID, "harp"))));
-	}
-	
-	@Override
-	protected VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
+	private static final VoxelShape SHAPE = Block.box(3, 0, 3, 13, 13, 13);
+
+	protected VoxelShape getOutlineShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
 		return SHAPE;
 	}
 	
 	
-	protected VoxelShape getCameraCollisionShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
+	protected VoxelShape getCameraCollisionShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
 		return this.getOutlineShape(state, world, pos, context);
 	}
-	
-	@Override
-	protected ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit) {
-		if (!world.isClient()) {
-			if (player.isSneaking() || world.getBlockState(new BlockPos(pos.getX(), pos.getY() - 1, pos.getZ())).getPistonBehavior() == PistonBehavior.PUSH_ONLY) {
-				world.playSound(null, pos, InstrumentalSounds.DRUM, SoundCategory.BLOCKS, 1.0f, 2.0f);
+
+	protected InteractionResult onUse(BlockState state, Level world, BlockPos pos, Player player, BlockHitResult hit) {
+		if (!world.isClientSide()) {
+			if (player.isCrouching() || world.getBlockState(new BlockPos(pos.getX(), pos.getY() - 1, pos.getZ())).getPistonPushReaction() == PushReaction.PUSH_ONLY) {
+				world.playSound(null, pos, InstrumentalSounds.DRUM, SoundSource.BLOCKS, 1.0f, 2.0f);
 			} else {
-				world.playSound(null, pos, InstrumentalSounds.DRUM, SoundCategory.BLOCKS, 1.0f, 1.0f);
+				world.playSound(null, pos, InstrumentalSounds.DRUM, SoundSource.BLOCKS, 1.0f, 1.0f);
 			}
 		}
-		return ActionResult.SUCCESS;
+		return InteractionResult.SUCCESS;
 	}
+
+	public Drum(BlockBehaviour.Properties properties) {
+		super(properties.noOcclusion().ignitedByLava().sound(SoundType.WOOD));
+	}
+
 }

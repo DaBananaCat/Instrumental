@@ -7,14 +7,14 @@ import banana.instrumental.items.PanFlute;
 import banana.instrumental.sound.InstrumentalSounds;
 import net.fabricmc.api.ModInitializer;
 
-import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroups;
-import net.minecraft.item.Items;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.util.Identifier;
+import net.fabricmc.fabric.api.creativetab.v1.CreativeModeTabEvents;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.CreativeModeTabs;
+import net.minecraft.world.item.Items;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.Registry;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.resources.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,8 +27,8 @@ public class Instrumental implements ModInitializer {
 	public static Item GUITAR;
 	public static Item HARP;
 	
-	public static final Identifier DRUM = Identifier.of("drum");
-	public static SoundEvent DRUM_SOUND_EVENT = SoundEvent.of(DRUM);
+	public static final Identifier DRUM = Identifier.fromNamespaceAndPath(MOD_ID, "drum");
+	public static SoundEvent DRUM_SOUND_EVENT = SoundEvent.createVariableRangeEvent(DRUM);
 	
 	@Override
 	public void onInitialize() {
@@ -40,15 +40,15 @@ public class Instrumental implements ModInitializer {
 		HARP = register("harp", new Harp());
 		GUITAR = register("guitar", new Guitar());
 		
-		ItemGroupEvents.modifyEntriesEvent(ItemGroups.TOOLS).register(content -> {
-			content.addAfter(Items.GOAT_HORN, PAN_FLUTE);
-			content.addAfter(PAN_FLUTE, HARP);
-			content.addAfter(HARP, GUITAR);
+		CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.TOOLS_AND_UTILITIES).register(content -> {
+			content.insertAfter(Items.GOAT_HORN, PAN_FLUTE);
+			content.insertAfter(PAN_FLUTE, HARP);
+			content.insertAfter(HARP, GUITAR);
 		});
 		
 	}
 	
 	private static Item register(String name, Item item) {
-		return Registry.register(Registries.ITEM, Identifier.of(Instrumental.MOD_ID, name), item);
+		return Registry.register(BuiltInRegistries.ITEM, Identifier.fromNamespaceAndPath(Instrumental.MOD_ID, name), item);
 	}
 }

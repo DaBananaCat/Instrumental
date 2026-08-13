@@ -1,26 +1,25 @@
 package banana.instrumental.items;
 
 import banana.instrumental.Instrumental;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
-import net.minecraft.util.Hand;
-import net.minecraft.util.ActionResult;
-import net.minecraft.item.consume.UseAction;
-import net.minecraft.util.Identifier;
-import net.minecraft.world.World;
-import net.minecraft.server.world.ServerWorld;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.core.Holder;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.item.ItemUseAnimation;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.level.Level;
+import net.minecraft.server.level.ServerLevel;
 
 
 import org.jetbrains.annotations.Nullable;
@@ -44,13 +43,13 @@ public class InstrumentTemplate extends Item {
 			"#020AFE", "#0037F6", "#0068E0", "#009ABC",
 			"#00C68D", "#00E958", "#00FC21", "#1FFC00",
 			"#59E800", "#94C100"};
-	public final RegistryEntry.Reference<SoundEvent> instrument;
+	public final Holder.Reference<SoundEvent> instrument;
 	public final String hand_action;
 	
 	// Add the item key as a parm to the constructor
 	// On all your classes that extend this, pass in the itemKey to the constructor
-	public InstrumentTemplate(RegistryEntry.Reference<SoundEvent> instrument, String hand_action, Identifier itemKey) {
-		super(new Item.Settings().maxCount(1).registryKey(RegistryKey.of(RegistryKeys.ITEM, itemKey)));
+	public InstrumentTemplate(Holder.Reference<SoundEvent> instrument, String hand_action, Identifier itemKey) {
+		super(new Item.Properties().stacksTo(1).setId(ResourceKey.create(Registries.ITEM, itemKey)));
 		this.instrument = instrument;
 		this.hand_action = hand_action;
 		for (int i = -12; i <= 12; i++) {
@@ -59,41 +58,37 @@ public class InstrumentTemplate extends Item {
 	}
 	
 	
-	@Override
 	public ItemStack getDefaultStack() {
 		return new ItemStack(this);
 	}
 	
-	@Override
 	public int getMaxUseTime(ItemStack stack, LivingEntity user) {
 		return 72000;
 	}
 	
-	@Override
-	public UseAction getUseAction(ItemStack stack) {
+	public ItemUseAnimation getUseAction(ItemStack stack) {
 		if (Objects.equals(this.hand_action, "horn")) {
-			return UseAction.TOOT_HORN;
+			return ItemUseAnimation.TOOT_HORN;
 		} else if (Objects.equals(this.hand_action, "spear")) {
-			return UseAction.SPEAR;
+			return ItemUseAnimation.SPEAR;
 		} else if (Objects.equals(this.hand_action, "bow")) {
-			return UseAction.BOW;
+			return ItemUseAnimation.BOW;
 		}
 		
-		return UseAction.NONE;
+		return ItemUseAnimation.NONE;
 	}
 	
 	@Override
-	public ActionResult use(World world, PlayerEntity user, Hand hand) {
-		ItemStack itemStack = user.getStackInHand(hand);
-		if (!world.isClient()) {
-			user.setCurrentHand(hand);
-			float pitch = user.getPitch();
+	public InteractionResult use(Level world, Player user, InteractionHand hand) {
+		ItemStack itemStack = user.getItemInHand(hand);
+		if (!world.isClientSide()) {
+			float pitch = user.getXRot();
 			float pitch_mod = (float) Math.pow(2, (double) (Math.round(12 * (-pitch + 90) / 90) - 12) / 12);
 			
-			world.playSound(null, user.getX(), user.getY(), user.getZ(), this.instrument, SoundCategory.PLAYERS, 1.0F, pitch_mod);
-			return ActionResult.CONSUME;
+			world.playSound(null, user.getX(), user.getY(), user.getZ(), this.instrument, SoundSource.PLAYERS, 1.0F, pitch_mod);
+			return InteractionResult.CONSUME;
 		}
-		return ActionResult.FAIL;
+		return InteractionResult.FAIL;
 	}
 	
 	public static int darkenColor(int color, float factor) {
@@ -113,10 +108,10 @@ public class InstrumentTemplate extends Item {
 	}
 	
 	@Override
-	public void inventoryTick(ItemStack stack, ServerWorld world, Entity entity, @Nullable EquipmentSlot slot) {
-		if (!(entity instanceof PlayerEntity player)) return;
-		if (stack == entity.getWeaponStack()) {
-			float sound = (float) Math.pow(2, (double) (Math.round(12 * (-entity.getPitch() + 90) / 90) - 12) / 12);
+	public void inventoryTick(ItemStack stack, ServerLevel world, Entity entity, @Nullable EquipmentSlot slot) {
+		if (!(entity instanceof Player player)) return;
+		if (stack == entity.getWeaponItem()) {
+			float sound = (float) Math.pow(2, (double) (Math.round(12 * (-entity.getXRot() + 90) / 90) - 12) / 12);
 			if (sound < 0) {
 				sound = -sound;
 			}
@@ -129,36 +124,36 @@ public class InstrumentTemplate extends Item {
 				// part 3: Current note
 				// part 4: |
 				// part 5: Next Note
-				Text part2 = Text.literal(" | ").setStyle(Style.EMPTY.withColor(16777215));
-				Text part4 = Text.literal(" | ").setStyle(Style.EMPTY.withColor(16777215));
-				
-				Text part1 = Text.literal("").setStyle(Style.EMPTY.withColor(16777215));
-				Text part3 = Text.literal("").setStyle(Style.EMPTY.withColor(16777215));
-				Text part5 = Text.literal("").setStyle(Style.EMPTY.withColor(16777215));
+				Component part2 = Component.literal(" | ").setStyle(Style.EMPTY.withColor(16777215));
+				Component part4 = Component.literal(" | ").setStyle(Style.EMPTY.withColor(16777215));
+
+				Component part1 = Component.literal("").setStyle(Style.EMPTY.withColor(16777215));
+				Component part3 = Component.literal("").setStyle(Style.EMPTY.withColor(16777215));
+				Component part5 = Component.literal("").setStyle(Style.EMPTY.withColor(16777215));
 				
 				if (Math.abs(keys[i] - sound) < tolerance) {
 					if (i == 24) {
 						
 						int colorIntPr = darkenColor(Integer.parseInt(hex[i - 1].substring(1), 16), 0.5f);
-						part1 = Text.literal(values[i - 1]).setStyle(Style.EMPTY.withColor(colorIntPr));
-						part3 = Text.literal(values[i]).setStyle(Style.EMPTY.withColor(colorInt));
+						part1 = Component.literal(values[i - 1]).setStyle(Style.EMPTY.withColor(colorIntPr));
+						part3 = Component.literal(values[i]).setStyle(Style.EMPTY.withColor(colorInt));
 						
 						
 					} else if (i == 0) {
 						int colorIntNe = darkenColor(Integer.parseInt(hex[i + 1].substring(1), 16), 0.5f);
-						part3 = Text.literal(values[i]).setStyle(Style.EMPTY.withColor(colorInt));
-						part5 = Text.literal(values[i + 1]).setStyle(Style.EMPTY.withColor(colorIntNe));
-						
+						part3 = Component.literal(values[i]).setStyle(Style.EMPTY.withColor(colorInt));
+						part5 = Component.literal(values[i + 1]).setStyle(Style.EMPTY.withColor(colorIntNe));
+
 					} else {
 						int colorIntPr = darkenColor(Integer.parseInt(hex[i - 1].substring(1), 16), 0.5f);
 						int colorIntNe = darkenColor(Integer.parseInt(hex[i + 1].substring(1), 16), 0.5f);
-						part1 = Text.literal(values[i - 1]).setStyle(Style.EMPTY.withColor(colorIntPr));
-						part3 = Text.literal(values[i]).setStyle(Style.EMPTY.withColor(colorInt));
-						part5 = Text.literal(values[i + 1]).setStyle(Style.EMPTY.withColor(colorIntNe));
+						part1 = Component.literal(values[i - 1]).setStyle(Style.EMPTY.withColor(colorIntPr));
+						part3 = Component.literal(values[i]).setStyle(Style.EMPTY.withColor(colorInt));
+						part5 = Component.literal(values[i + 1]).setStyle(Style.EMPTY.withColor(colorIntNe));
 					}
-					
-					Text noteMessage = part1.copy().append(part2).append(part3).append(part4).append(part5);
-					player.sendMessage(noteMessage, true);
+
+					Component noteMessage = part1.copy().append(part2).append(part3).append(part4).append(part5);
+					player.sendSystemMessage(noteMessage);
 					
 					break;
 				}

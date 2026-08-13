@@ -1,9 +1,8 @@
 {
 	"required": true,
-	"package": "banana.instrumental.mixin.client",
+	"package": "banana.instrumental.mixin",
 	"compatibilityLevel": "JAVA_21",
 	"client": [
-		"ExampleClientMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1
