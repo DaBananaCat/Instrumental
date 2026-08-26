@@ -7,6 +7,6 @@ import net.minecraft.resources.Identifier;
 
 public class Harp extends InstrumentTemplate{
     public Harp() {
-        super(SoundEvents.NOTE_BLOCK_HARP,"bow", Identifier.fromNamespaceAndPath(Instrumental.MOD_ID, "harp"));
+        super(SoundEvents.NOTE_BLOCK_HARP, Identifier.fromNamespaceAndPath(Instrumental.MOD_ID, "harp"));
     }
 }
